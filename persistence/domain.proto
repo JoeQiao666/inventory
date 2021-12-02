@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package persistence;
+
+option go_package = "github.com/JoeQiao666/inventory/persistence;persistence";
+
+message Product {
+  string productId = 1;
+  string name = 2;
+  int32 quantity = 3;
+}
+
+message ProductsAdded {
+  repeated Product products = 1;
+}
+
+message ProductsReserved {
+  repeated Product products = 1;
+}
+
+message Inventory {
+  repeated Product products = 1;
+}

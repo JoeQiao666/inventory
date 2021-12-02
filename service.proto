@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+import "cloudstate/entity_key.proto";
+import "google/api/annotations.proto";
+
+package inventory;
+
+option go_package = "github.com/JoeQiao666/inventory;inventory";
+
+message Product {
+  string product_id = 1;
+  string name = 2;
+  int32 quantity = 3;
+}
+
+message Products {
+  repeated Product products = 1;
+}
+
+message AddProducts {
+  string store_id = 1 [(.cloudstate.entity_key) = true];
+  repeated Product products = 2;
+}
+
+message ReserveProducts {
+  string store_id = 1 [(.cloudstate.entity_key) = true];
+  repeated Product products = 2;
+}
+
+message QueryInventory {
+  string store_id = 1 [(.cloudstate.entity_key) = true];
+}
+
+service Inventory {
+  rpc Restock(AddProducts) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/inventory/{store_id}/restock",
+      body: "*",
+    };
+  }
+
+  rpc Reserve(ReserveProducts) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/inventory/{store_id}/reserve",
+      body: "*",
+    };
+  }
+
+  rpc GetInventory(QueryInventory) returns (Products) {
+    option (google.api.http) = {
+      get: "/inventory/{store_id}",
+      response_body: "products"
+    };
+  }
+}
